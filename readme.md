@@ -4,6 +4,12 @@
 
 # mongo
 
+# db.stats()
+
+# db.getCollectionInfos()
+
+# db.getCollectionNames()
+
 # use app
 
 # db.collection.find()
