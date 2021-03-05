@@ -4,6 +4,6 @@ server {
 	server_name realworld-docker.com;
 
 	location / {
-		proxy_pass http://frontend:3000
+		proxy_pass http://frontend:3000;
 	}
 }

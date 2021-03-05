@@ -12,11 +12,18 @@ const startServer = () => {
   });
 };
 
-// commits
+// commits localhost:3002/test
 app.get("/test", (req, res) => {
   res.send("Our auth server is working correctly");
 });
 
+// test localhost:3002/auth/currentuser
+app.get("/auth/currentuser", (req, res) => {
+  res.json({
+    currentuser: true,
+    email: "foo@test.com",
+  });
+});
 connectDb()
   .on("error", console.log)
   .on("disconnect", connectDb)
