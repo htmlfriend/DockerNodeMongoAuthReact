@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const axios = require("axios");
 const { host, port, db, authApiUrl } = require("./configuration/index");
 const { connectDb } = require("./helpers/db");
-const { response } = require("express");
 const app = express();
 const postSchema = new mongoose.Schema({
   name: String,
@@ -16,7 +15,7 @@ app.get("/test", (req, res) => {
 });
 
 // check login users
-app.get("/testcurrentuser", (req, res) => {
+app.get("/currentUser", (req, res) => {
   axios.get(authApiUrl + "/currentUser").then((response) => {
     res.json({
       id: "124",
@@ -26,6 +25,12 @@ app.get("/testcurrentuser", (req, res) => {
   });
 });
 
+// data from auth
+app.get("/api/testapidata", (req, res) => {
+  res.json({
+    testwithapi: true,
+  });
+});
 const startServer = () => {
   app.listen(port, () => {
     console.log(`Started api service on port: ${port}`);

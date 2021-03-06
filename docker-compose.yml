@@ -2,53 +2,63 @@ version: "3"
 
 services:
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
     container_name: docker-react
     command: serve -s build -l 3000
     ports:
       - "3000:3000"
     restart: unless-stopped
+    networks:
+      - real-docker-network
 
   api:
     build: ./api
     container_name: docker-api
     command: npm run start
     restart: unless-stopped
-    ports:
-      - "3001:3001"
     environment:
       - PORT=3001
-      - HOST=http://realword-docker.com
+      # - HOST=http://realword-docker.com
       - MONGO_URL=mongodb://api_db:27017/api
       - AUTH_API_URL=http://auth:3002/api
     depends_on:
       - api_db
+    networks:
+      - real-docker-network
 
   auth:
     build: ./auth
     container_name: docker-auth
     command: npm run start
     restart: unless-stopped
-    ports:
-      - "3002:3002"
     environment:
       - PORT=3002
-      - HOST=http://realword-docker.com
+      # - HOST=http://realword-docker.com
       - MONGO_URL=mongodb://auth_db:27017/auth
+      - API_URL=http://api:3001/api
     depends_on:
       - auth_db
+    networks:
+      - real-docker-network
 
   api_db:
     image: mongo:latest
     container_name: docker-api-db
     volumes:
       - mongodb_api:/data/db
+    networks:
+      - real-docker-network
 
   auth_db:
     image: mongo:latest
     container_name: docker-auth-db
     volumes:
       - mongodb_auth:/data/db
+    networks:
+      - real-docker-network
+
   nginx:
     image: nginx:stable-alpine
     container_name: docker-nginx
@@ -58,6 +68,14 @@ services:
       - ./nginx/nginx.conf.prod:/etc/nginx/conf.d/nginx.conf
     depends_on:
       - frontend
+      - api
+      - auth
+    networks:
+      - real-docker-network
 volumes:
   mongodb_api:
   mongodb_auth:
+
+networks:
+  real-docker-network:
+    driver: bridge
